@@ -74,6 +74,21 @@ defaultEraserConfig()
   return 0
 }
 
+configure()
+{
+  check
+  if [ $? -eq 0 ] ; then
+    defaultStylusConfig
+    defaultPadConfig
+    defaultEraserConfig
+    logger -s "[ OK ] Wacom configured"
+    exit 0
+  else
+    log_devices
+    exit 1
+  fi
+}
+
 case "$1" in
   help)
     man xsetwacom
@@ -88,17 +103,11 @@ case "$1" in
       exit 1
     fi
     ;;
+  udev)
+    udev_wait
+    configure
+    ;;
   *)
-    check
-    if [ $? -eq 0 ] ; then
-      defaultStylusConfig
-      defaultPadConfig
-      defaultEraserConfig
-      logger -s "[ OK ] Wacom configured"
-      exit 0
-    else
-      log_devices
-      exit 1
-    fi
+    configure
     ;;
 esac
